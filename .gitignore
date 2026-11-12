@@ -3,3 +3,11 @@
 .idea/
 *~
 *.swp
+__pycache__/
+*.pyc
+.ai-stage-*
+*.pem
+*.key
+*.p12
+*.mobileconfig
+.env

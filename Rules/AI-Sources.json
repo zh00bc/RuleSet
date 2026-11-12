@@ -1,0 +1,48 @@
+{
+  "checks": {
+    "negative_domain_samples": 14,
+    "positive_domain_samples": 19
+  },
+  "conversion": {
+    "azure_webpubsub": "Dedicated-prefix wildcard; broader than numeric regex"
+  },
+  "counts": {
+    "sukka": 55,
+    "supplement": 57,
+    "voice_ip": 538
+  },
+  "excluded_voice_rules": [
+    "IP-ASN,399358"
+  ],
+  "files": {
+    "AI-Sukka.list": "399c0dbc18ff37bc1614e37df3a0e5000a750fbf9429e93a3a30b6f217e71665",
+    "AI-Supplement.list": "c075059e0cb49e6d3a56f712cd2878bec51385297efff5ed2403d2aec4be1665",
+    "AI-Voice-IP.list": "2751ac9373a9a47ae0f1be9d439568b562f0680be5a397ec6c59cdf169d666cd"
+  },
+  "licenses": {
+    "MetaCubeX/meta-rules-dat": "GPL-3.0",
+    "SukkaW/Surge": "AGPL-3.0"
+  },
+  "sources": {
+    "anthropic": {
+      "sha256": "d956bc8d925a5f393df587163149328a2f671569e0bc31c84d9a34da283b118d",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/anthropic.json"
+    },
+    "google-gemini": {
+      "sha256": "c1b5b4f647ce40690747d0c6ee9c44ba31ccc781c83d9434b80b033f4109c17c",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-gemini.json"
+    },
+    "openai": {
+      "sha256": "88534663f0b30ce156200d22c50fea8f9b1944c8314e0fa212850781d90e7114",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/openai.json"
+    },
+    "sukka_domains": {
+      "sha256": "055e56209c88a9306be210813e9e3ef175fdff4b90aaf05768953673bfbc9aea",
+      "url": "https://ruleset.skk.moe/List/non_ip/ai.conf"
+    },
+    "sukka_voice": {
+      "sha256": "df6efb95514491486fb2b3a785f73f0757610b60011b6cc414999a42e38d96c4",
+      "url": "https://ruleset.skk.moe/List/ip/ai.conf"
+    }
+  }
+}

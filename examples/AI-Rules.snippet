@@ -1,0 +1,10 @@
+# Add to the existing profile. Define this chained node privately in [Proxy].
+# Do not publish node credentials or the complete personal profile.
+[Proxy Group]
+AI-Services = select, SG-Lightsail-via-Zouter
+
+[Rule]
+# Place before general Google/Apple, GEOIP and FINAL rules.
+RULE-SET,https://raw.githubusercontent.com/zh00bc/RuleSet/main/Rules/AI-Sukka.list,AI-Services,extended-matching,update-interval=21600
+RULE-SET,https://raw.githubusercontent.com/zh00bc/RuleSet/main/Rules/AI-Supplement.list,AI-Services,extended-matching,update-interval=21600
+AND,((PROTOCOL,UDP),(DEST-PORT,3478),(RULE-SET,https://raw.githubusercontent.com/zh00bc/RuleSet/main/Rules/AI-Voice-IP.list,no-resolve,update-interval=21600)),AI-Services
