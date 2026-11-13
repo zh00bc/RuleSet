@@ -86,7 +86,7 @@ def parse_sukka(text):
             continue
         kind, separator, value = line.partition(",")
         value = value.strip()
-        if not separator or kind not in DOMAIN_TYPES or not value or "\n" in value:
+        if not separator or kind not in DOMAIN_TYPES or not value or "\n" in value or "," in value:
             raise ValueError("Unexpected Sukka domain rule: " + line[:160])
         if kind == "DOMAIN" and value.startswith("7h15."):
             continue  # upstream identification marker, not an AI dependency
@@ -94,6 +94,21 @@ def parse_sukka(text):
             value = hostname(value)
             if kind == "DOMAIN-SUFFIX" and value in SHARED_ROOTS:
                 raise ValueError("Shared root added upstream: " + value)
+        elif kind == "DOMAIN-KEYWORD":
+            value = value.lower()
+            if not re.fullmatch(r"[a-z0-9_.-]{5,253}", value):
+                raise ValueError("Invalid or overly broad domain keyword")
+        elif kind == "DOMAIN-WILDCARD":
+            value = value.lower()
+            if not re.fullmatch(r"[a-z0-9_.?*-]{3,253}", value) or "." not in value:
+                raise ValueError("Invalid domain wildcard")
+            if value.lstrip("*?.") in SHARED_ROOTS:
+                raise ValueError("Shared wildcard root added upstream")
+        elif kind == "URL-REGEX":
+            try:
+                re.compile(value)
+            except re.error as error:
+                raise ValueError("Invalid URL regex") from error
         rules.add((kind, value))
     if not 20 <= len(rules) <= 10000:
         raise ValueError("Unexpected Sukka domain count")
@@ -179,6 +194,20 @@ def render(title, rules, note=""):
     return "\n".join(header + [k + "," + v for k, v in sorted(rules)]) + "\n"
 
 
+def provider_samples(rules):
+    samples = set()
+    for kind, value in rules:
+        if kind == "DOMAIN":
+            samples.add(value)
+        elif kind == "DOMAIN-SUFFIX":
+            samples.update((value, "probe." + value))
+        elif kind == "DOMAIN-WILDCARD":
+            samples.add(value.replace("*", "sample-42").replace("?", "a"))
+        else:
+            raise ValueError("Unexpected converted provider rule: " + kind)
+    return samples
+
+
 def assemble(inputs):
     if set(inputs) != set(SOURCES):
         raise ValueError("A source is missing; retain previous published rules")
@@ -187,6 +216,9 @@ def assemble(inputs):
                             for name in ("openai", "anthropic", "google-gemini")))
     supplement = supplement_only(providers, base)
     combined = base | supplement
+    all_provider_samples = provider_samples(providers)
+    if any(not matches(host, combined) for host in all_provider_samples):
+        raise ValueError("Upstream provider domain lost during conversion or deduplication")
     if any(not matches(host, combined) for host in POSITIVE):
         raise ValueError("Critical AI domain coverage regression")
     if any(matches(host, combined) for host in NEGATIVE):
@@ -205,7 +237,8 @@ def assemble(inputs):
         "sources": {k: {"url": url, "sha256": hashlib.sha256(inputs[k].encode()).hexdigest()}
                     for k, url in SOURCES.items()},
         "counts": {"sukka": len(base), "supplement": len(supplement), "voice_ip": len(voice)},
-        "checks": {"positive_domain_samples": len(POSITIVE), "negative_domain_samples": len(NEGATIVE)},
+        "checks": {"positive_domain_samples": len(POSITIVE), "negative_domain_samples": len(NEGATIVE),
+                   "all_provider_domain_samples": len(all_provider_samples)},
         "conversion": {"azure_webpubsub": "Dedicated-prefix wildcard; broader than numeric regex"},
         "excluded_voice_rules": [line.strip() for line in inputs["sukka_voice"].splitlines()
                                  if line.strip().startswith("IP-ASN,")],

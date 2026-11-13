@@ -3,6 +3,8 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest import mock
+import urllib.error
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("build_ai", ROOT / "scripts/build_ai.py")
@@ -80,6 +82,59 @@ class AITests(unittest.TestCase):
             before = {p.name: p.stat().st_mtime_ns for p in Path(tmp).iterdir()}
             ai.publish(fixtures(), tmp)
             self.assertEqual(before, {p.name: p.stat().st_mtime_ns for p in Path(tmp).iterdir()})
+
+    def test_new_upstream_domain_is_checked_without_editing_sample_list(self):
+        data = fixtures()
+        doc = json.loads(data["anthropic"])
+        doc["rules"][0]["domain_suffix"].append("new-provider-cdn.example")
+        data["anthropic"] = json.dumps(doc)
+        original = ai.supplement_only
+        def broken_conversion(providers, base):
+            return {(kind, value) for kind, value in original(providers, base)
+                    if value != "new-provider-cdn.example"}
+        with mock.patch.object(ai, "supplement_only", side_effect=broken_conversion):
+            with self.assertRaisesRegex(ValueError, "Upstream provider domain lost"):
+                ai.assemble(data)
+
+    def test_invalid_url_regex_and_extra_options_are_not_published(self):
+        for extra in ["URL-REGEX,(", "DOMAIN-KEYWORD,openai,unreviewed-option"]:
+            data = fixtures()
+            data["sukka_domains"] += "\n" + extra
+            with self.assertRaises(ValueError):
+                ai.assemble(data)
+
+    def test_fetch_failure_has_bounded_retries(self):
+        with mock.patch.object(ai.urllib.request, "urlopen", side_effect=urllib.error.URLError("unavailable")) as fetch:
+            with mock.patch.object(ai.time, "sleep") as sleep:
+                with self.assertRaises(urllib.error.URLError):
+                    ai.fetch(("openai", ai.SOURCES["openai"]))
+                self.assertEqual(fetch.call_count, 3)
+                self.assertEqual(sleep.call_count, 2)
+
+    def test_network_failure_does_not_publish_partial_source_results(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ai.publish(fixtures(), tmp)
+            before = {p.name: p.read_bytes() for p in Path(tmp).iterdir()}
+            def fetch(item):
+                name, _ = item
+                if name == "openai":
+                    raise urllib.error.URLError("simulated network failure")
+                return name, fixtures()[name]
+            with mock.patch.object(ai, "fetch", side_effect=fetch):
+                with mock.patch("sys.argv", ["build_ai.py", "--output", tmp]):
+                    with self.assertRaises(urllib.error.URLError):
+                        ai.main()
+            self.assertEqual(before, {p.name: p.read_bytes() for p in Path(tmp).iterdir()})
+
+    def test_large_reduction_preserves_last_valid_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            more = fixtures()
+            more["sukka_domains"] += "\n" + "\n".join("DOMAIN,extra-" + str(i) + ".example" for i in range(40))
+            ai.publish(more, tmp)
+            before = {p.name: p.read_bytes() for p in Path(tmp).iterdir()}
+            with self.assertRaisesRegex(ValueError, "Large rule-count reduction"):
+                ai.publish(fixtures(), tmp)
+            self.assertEqual(before, {p.name: p.read_bytes() for p in Path(tmp).iterdir()})
 
 
 if __name__ == "__main__":
