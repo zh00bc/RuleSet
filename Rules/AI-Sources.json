@@ -1,5 +1,6 @@
 {
   "checks": {
+    "all_provider_domain_samples": 160,
     "negative_domain_samples": 14,
     "positive_domain_samples": 19
   },
