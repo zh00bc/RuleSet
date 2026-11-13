@@ -13,7 +13,7 @@ Mac 和 iOS 使用同一套客户端规则，将 AI 流量交给私有配置中�
 | --- | --- |
 | [AI-Sukka.list](Rules/AI-Sukka.list) | Sukka AI 域名主表 |
 | [AI-Supplement.list](Rules/AI-Supplement.list) | MetaCubeX 的 OpenAI、Anthropic、Gemini 专用补充，去除已被主表覆盖的条目 |
-| [AI-Voice-IP.list](Rules/AI-Voice-IP.list) | Sukka 从 OpenAI 官方数据生成的语音 IP；仅与 UDP 3478 条件一起使用 |
+| [AI-Voice-IP.list](Rules/AI-Voice-IP.list) | Sukka 从 OpenAI 官方数据生成的精确语音 IP，覆盖 UDP 3478 与 TCP 443 回退 |
 | [AI-Sources.json](Rules/AI-Sources.json) | 上游地址、输入与输出 SHA-256、条数及校验信息 |
 
 补充规则包含文件上传、LiveKit、Claude 内容与 MCP 内容、Gemini 辅助接口等域名。
@@ -21,6 +21,9 @@ Mac 和 iOS 使用同一套客户端规则，将 AI 流量交给私有配置中�
 Sukka 的 Google URL-REGEX 规则依赖客户端已有的 HTTPS 可见性；本仓库不安装或启用 MITM。
 Apple Intelligence 使用其他策略，不加入本套补充规则。
 Sukka 的 IP 表还包含 ASN 兜底；本项目只提取语音 CIDR，排除的 ASN 记录在来源清单中。
+语音 IP 也采用顶层 RULE-SET 订阅，使 `update-interval=21600` 在运行时保留，
+避免逻辑子规则导出时丢失更新间隔。规则按这些语音服务 IP 分流，不附加端口限制，
+因此 UDP 3478 与 TCP 443 回退保持同一出口；其他服务器使用相同端口不会因此命中。
 
 ## 自动更新
 

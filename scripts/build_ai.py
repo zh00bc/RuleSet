@@ -231,7 +231,7 @@ def assemble(inputs):
                                      "Azure WebPubSub regex becomes a dedicated-prefix wildcard (slightly wider)."),
         "AI-Voice-IP.list": render("ChatGPT Voice IPs", {
             ("IP-CIDR6" if n.version == 6 else "IP-CIDR", str(n) + ",no-resolve") for n in voice
-        }, "Use only with UDP destination port 3478 in the main Surge profile."),
+        }, "Dedicated voice IPs; route UDP 3478 and TCP 443 fallback through the same exit."),
     }
     manifest = {
         "sources": {k: {"url": url, "sha256": hashlib.sha256(inputs[k].encode()).hexdigest()}

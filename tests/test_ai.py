@@ -76,6 +76,14 @@ class AITests(unittest.TestCase):
         self.assertNotIn("IP-ASN", files["AI-Voice-IP.list"])
         self.assertEqual(manifest["excluded_voice_rules"], ["IP-ASN,399358"])
 
+    def test_voice_subscription_keeps_update_interval_at_top_level(self):
+        snippet = (ROOT / "examples/AI-Rules.snippet").read_text()
+        voice_lines = [line for line in snippet.splitlines() if "AI-Voice-IP.list" in line]
+        self.assertEqual(len(voice_lines), 1)
+        self.assertTrue(voice_lines[0].startswith("RULE-SET,"))
+        self.assertIn("update-interval=21600", voice_lines[0])
+        self.assertNotIn("DEST-PORT", voice_lines[0])  # TCP fallback must also follow SG
+
     def test_unchanged_inputs_do_not_rewrite_files(self):
         with tempfile.TemporaryDirectory() as tmp:
             ai.publish(fixtures(), tmp)
