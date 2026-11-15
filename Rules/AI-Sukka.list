@@ -3,6 +3,7 @@
 # Sources, licenses and input SHA-256: AI-Sources.json
 # URL-REGEX requires existing HTTPS visibility; no MITM configuration is installed.
 DOMAIN,ai.google.dev
+DOMAIN,aicode.googleapis.com
 DOMAIN,aida.googleapis.com
 DOMAIN,aisandbox-pa.googleapis.com
 DOMAIN,alkalicore-pa.clients6.google.com
@@ -10,7 +11,9 @@ DOMAIN,antigravity-unleash.goog
 DOMAIN,antigravity.google
 DOMAIN,api.github.com
 DOMAIN,api.jetbrains.ai
+DOMAIN,cloud.zed.dev
 DOMAIN,daily-cloudcode-pa.googleapis.com
+DOMAIN,daily-cloudcode-pa.sandbox.googleapis.com
 DOMAIN,gateway.ai.cloudflare.com
 DOMAIN,inference.codeium.com
 DOMAIN,jules.google.com
