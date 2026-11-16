@@ -10,7 +10,7 @@
   "counts": {
     "sukka": 58,
     "supplement": 57,
-    "voice_ip": 538
+    "voice_ip": 409
   },
   "excluded_voice_rules": [
     "IP-ASN,399358"
@@ -18,7 +18,7 @@
   "files": {
     "AI-Sukka.list": "561dcd51b749769b6b9c24efa87359a57bca8a2ce5a5f5e5b5087e8f1534e971",
     "AI-Supplement.list": "c075059e0cb49e6d3a56f712cd2878bec51385297efff5ed2403d2aec4be1665",
-    "AI-Voice-IP.list": "9619d499f69056690836e61eb45628e66a16a03b58c21d0b50ebe870681e4a4f"
+    "AI-Voice-IP.list": "5b67e26b098156d19f47fa7d772b3f506dfdeab1e3f193a899d43cfc58f467af"
   },
   "licenses": {
     "MetaCubeX/meta-rules-dat": "GPL-3.0",
@@ -42,7 +42,7 @@
       "url": "https://ruleset.skk.moe/List/non_ip/ai.conf"
     },
     "sukka_voice": {
-      "sha256": "df6efb95514491486fb2b3a785f73f0757610b60011b6cc414999a42e38d96c4",
+      "sha256": "0a302fbee593dca126b1bbc2f8921ba3a0afbe4e6c9aefb30909550e18945f01",
       "url": "https://ruleset.skk.moe/List/ip/ai.conf"
     }
   }
