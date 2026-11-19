@@ -8,7 +8,7 @@
     "azure_webpubsub": "Dedicated-prefix wildcard; broader than numeric regex"
   },
   "counts": {
-    "sukka": 58,
+    "sukka": 60,
     "supplement": 57,
     "voice_ip": 409
   },
@@ -16,7 +16,7 @@
     "IP-ASN,399358"
   ],
   "files": {
-    "AI-Sukka.list": "561dcd51b749769b6b9c24efa87359a57bca8a2ce5a5f5e5b5087e8f1534e971",
+    "AI-Sukka.list": "bc4379cb485cebc6a1640683dd5b1be9c95e1284cf540302f8ea3f4f9a4f6698",
     "AI-Supplement.list": "c075059e0cb49e6d3a56f712cd2878bec51385297efff5ed2403d2aec4be1665",
     "AI-Voice-IP.list": "5b67e26b098156d19f47fa7d772b3f506dfdeab1e3f193a899d43cfc58f467af"
   },
@@ -38,7 +38,7 @@
       "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/openai.json"
     },
     "sukka_domains": {
-      "sha256": "d03b69fe837f0cdb438dd36c18b70ef601d664c92295a7f477a7958a66fca339",
+      "sha256": "9bb1deda142ba4e15f17a8bb33fb3154928bbd6fece9ba7b9aa9a3471378b318",
       "url": "https://ruleset.skk.moe/List/non_ip/ai.conf"
     },
     "sukka_voice": {
